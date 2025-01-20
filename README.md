@@ -1,70 +1,168 @@
-# Getting Started with Create React App
+# Quiz App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+The Quiz App is a web-based platform designed to test your knowledge through an engaging trivia quiz. It provides a seamless user experience with features like a timer, question navigation, and instant performance feedback.
 
-## Available Scripts
+## 🌟 Features
 
-In the project directory, you can run:
+- Dynamic questions fetched from an API.
+- Intuitive navigation to visit or revisit questions.
+- Real-time answer selection with marked status.
+- Score evaluation with negative marking for wrong answers.
+- Final feedback with detailed question-wise analysis.
 
-### `npm start`
+## 🛠️ Workflow of the Application
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Start Page
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- The app begins with a start page where the user inputs their Gmail ID.
+- Email validation is performed to ensure only authenticated users proceed.
 
-### `npm test`
+### Quiz Page
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- Fetches 15 random questions from the Open Trivia Database API.
+- Displays questions one at a time, with options randomized.
+- Tracks user progress, visited questions, and attempted answers.
+- Provides a timer to complete the quiz within the set duration (e.g., 30 minutes).
+- Allows navigation between questions using the question map or navigation buttons.
 
-### `npm run build`
+### Feedback Page
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Displays the user's total score.
+- Shows question-wise analysis, including:
+  - The question itself.
+  - The selected answer (highlighted as correct or incorrect).
+  - The correct answer for each question.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🚀 How to Start
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Clone the Repository
 
-### `npm run eject`
+```bash
+git clone <repository_url>
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 2. Navigate to the Project Directory
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+cd quiz-app
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 3. Install Dependencies
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+Make sure you have Node.js and npm installed. Then run:
 
-## Learn More
+```bash
+npm install
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### 4. Start the Application
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+To launch the development server, use:
 
-### Code Splitting
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+The app will be accessible at [http://localhost:3000/](http://localhost:3000/) in your browser.
 
-### Analyzing the Bundle Size
+## 🔑 Important Notes
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### API Integration
 
-### Making a Progressive Web App
+- The app uses the Open Trivia Database API to fetch questions dynamically.
+- Ensure you have a stable internet connection for API calls.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### State Management
 
-### Advanced Configuration
+- The application relies on React's state management to handle user answers, navigation, and quiz flow.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Navigation & Timer
 
-### Deployment
+- The timer counts down from 30 minutes and submits the quiz automatically upon expiration.
+- Users can navigate freely using the question map or the "Next" and "Previous" buttons.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Scoring
 
-### `npm run build` fails to minify
+- Correct answers score **+3 points**.
+- Incorrect answers deduct **-0.25 points**.
+- Unattempted questions do not affect the score.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## 🧩 Challenge & Solution
+
+### Challenge: Managing the Option State & Question Categories
+
+- The app needed to display options dynamically and highlight the selected one.
+- It also required tracking the question's state across three categories:
+  - **Not-Visited**: Questions that the user hasn’t navigated to yet.
+  - **Visited**: Questions that the user has viewed but hasn’t answered.
+  - **Attempted**: Questions where the user has selected an answer.
+
+### Solution:
+
+#### Options Highlighting:
+
+- Used the `userAns` state to store the user's selected answer for each question.
+- Applied conditional class styling to options based on whether they were selected, and whether the selection matched the correct answer.
+
+```jsx
+className={`flex items-center p-3 rounded-md ${
+  userAns[index] === opt
+    ? userAns[index] === correctAns[index]
+      ? "bg-green-100 border border-green-400"
+      : "bg-red-100 border border-red-400"
+    : "bg-gray-100"
+}`}
+```
+
+#### Tracking Question State:
+
+- Created a `visited` state array initialized with `false` for all questions. The first question was marked as visited by default.
+- Updated the `visited` state when navigating to a new question:
+
+```jsx
+const markVisited = (questionIndex) => {
+  setVisited((prevVisited) => {
+    const updatedVisited = [...prevVisited];
+    updatedVisited[questionIndex] = true;
+    return updatedVisited;
+  });
+};
+```
+
+- Used a helper function to determine a question's category:
+
+```jsx
+const getQuestionStatus = (index) => {
+  if (userAns[index]) return "attempted";
+  if (visited[index]) return "visited";
+  return "not-visited";
+};
+```
+
+#### Visualizing Question Categories:
+
+- Rendered buttons for each question in the "Question Map" with different styles based on their category:
+
+```jsx
+const getButtonClass = (index) => {
+  const status = getQuestionStatus(index);
+  if (status === "not-visited") return "bg-gray-300 hover:bg-gray-400";
+  if (status === "visited") return "bg-yellow-300 hover:bg-yellow-400";
+  if (status === "attempted") return "bg-green-300 hover:bg-green-400";
+  return "";
+};
+```
+
+### Result:
+
+- This approach ensured accurate tracking of question states and dynamic rendering of options with clear visual feedback, enhancing the overall user experience.
+
+## 💡 Improvements & Customization
+
+Feel free to customize the application by:
+
+- Adding more question categories by modifying the API call.
+- Extending the timer duration for a longer quiz.
+- Enhancing the UI with CSS frameworks like Tailwind or Material-UI.
+
+Enjoy the app, and happy quizzing! 🎯
